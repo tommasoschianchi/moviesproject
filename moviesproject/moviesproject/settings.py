@@ -41,16 +41,16 @@ INSTALLED_APPS = [
     'rest_framework',
     # local
     'movies.apps.MoviesConfig',
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
-
-
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -59,7 +59,10 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://LOCALHOST:8000',
+    ]
 ROOT_URLCONF = 'moviesproject.urls'
 
 TEMPLATES = [
