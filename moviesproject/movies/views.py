@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions
 from .models import Movie, StreamingChannel
 from .serializers import MovieSerializer, StreamingChannelSerializer
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsOwnerOrReadOnly
 
 
 class MovieViewSet(viewsets.ModelViewSet):
@@ -11,9 +11,10 @@ class MovieViewSet(viewsets.ModelViewSet):
     permission_classes = (IsOwnerOrReadOnly,)
     # new
     def perform_create(self, serializer): # new
-        serializer.save(owner=self.request.user) # new
+        serializer.save(owner=self.request.user) 
+        # new
 
 class StreamingChannelViewSet(viewsets.ModelViewSet):
     queryset = StreamingChannel.objects.all()
     serializer_class = StreamingChannelSerializer
-    permission_classes = (IsOwnerOrReadOnly,)
+    permission_classes = (IsAdminOrReadOnly,)

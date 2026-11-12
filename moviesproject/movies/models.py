@@ -5,6 +5,21 @@ USER = get_user_model() # new
 
 __all__ = ["Movie"] # new
 
+class StreamingChannel(models.Model):
+    name = models.CharField(max_length=250)
+    description = models.CharField(max_length=1000)
+    user = models.ForeignKey(
+        USER,
+        on_delete=models.PROTECT,
+        default=None,
+        null=True,
+    ) # new
+
+
+    def __str__(self):
+        return self.name
+
+
 class Movie(models.Model):
     owner = models.ForeignKey(
     USER,
@@ -21,7 +36,7 @@ class Movie(models.Model):
     director = models.CharField(max_length=100)
     description = models.CharField(max_length=1000)
     streaming_channel = models.ForeignKey(
-        'StreamingChannel',
+        StreamingChannel,
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -30,9 +45,3 @@ class Movie(models.Model):
     def __str__(self):
      return self.title
 
-class StreamingChannel(models.Model):
-    name = models.CharField(max_length=250)
-    description = models.CharField(max_length=1000)
-
-    def __str__(self):
-        return self.name

@@ -39,16 +39,35 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # third party
     'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
+    'dj_rest_auth',
+    'dj_rest_auth.registration', # new
+    'allauth', # new
+    'allauth.account', # new
+    'allauth.socialaccount', # new
     # local
     'movies.apps.MoviesConfig',
-    'corsheaders',
+   
 ]
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+       # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 }
+AUTHENTICATION_BACKENDS = [
+# Needed to login by username in Django admin,
+# regardless of `allauth`
+'django.contrib.auth.backends.ModelBackend',
+# `allauth` specific authentication methods
+# such as login by email
+'allauth.account.auth_backends.AuthenticationBackend',
+]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
@@ -58,6 +77,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
 ]
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
@@ -134,9 +154,7 @@ STATIC_URL = 'static/'
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
