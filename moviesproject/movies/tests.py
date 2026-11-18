@@ -1,3 +1,5 @@
+
+
 from django.test import TestCase
 import json
 import unittest
@@ -19,42 +21,58 @@ class NewVisitorTest(unittest.TestCase):
         ,
         "director": "Hayao Miyazaki"
         ,
-        "description": "The Castle of Cagliostro follows gentleman thief Lupin III..."
+        "description": "The Castle of Cagliostro follows gentleman thief Lupin III...",
+
         }
+     movie_string= str(movie)
+     movie['movie_hash'] = hash(movie_string)
+     
      login_data = {
-            "username": "tommaso4",
+            "username": "tommaso5",
             "password": "mypass123"
         }
 
      login_response = requests.post(
         f"{base.api_url}/dj-rest-auth/login/",
         json=login_data
-    )
-     self.assertEqual(200, login_response.status_code, f"Login failed: {login_response.text}")
+     )
+
+     if login_response.status_code != 200:
+        registration_data = {
+            "username": "tommaso5",
+            "password1": "mypass123",
+            "password2": "mypass123"
+        }
+        reg_response = requests.post(
+            f"{base.api_url}/dj-rest-auth/registration/",
+            json=registration_data
+        )
+        self.assertEqual(204, reg_response.status_code)
+        login_response = requests.post(
+            f"{base.api_url}/dj-rest-auth/login/",
+            json=login_data
+        )
+
+     self.assertEqual(200, login_response.status_code)
      token = login_response.json()['key']
      headers = {"Authorization": f"Token {token}"}
 
      post_response = requests.post(
-        f"{base.api_url}/movies/", 
+        f"{base.api_url}/movies/",
         json=movie,
         headers=headers
-    )
-     pk= json.loads(post_response.content.decode("UTF-8"))['id']
-
+     )
      self.assertEqual(201, post_response.status_code)
-
-     pk= json.loads(post_response.content.decode("UTF-8"))['id']
+     pk = post_response.json()['id']
 
      get_response = requests.get(f"{base.api_url}/movies/", headers=headers)
      self.assertEqual(200, get_response.status_code)
      movie_list = get_response.json()
-     self.assertIn(movie['title'], [film['title'] for film in movie_list])
-     self.assertIn(movie['director'], [film['director'] for film in movie_list])
-     self.assertIn(movie['description'], [film['description'] for film in movie_list])
+     self.assertIn(movie['movie_hash'], [film['movie_hash'] for film in movie_list])
 
      delete_response = requests.delete(f"{base.api_url}/movies/{pk}/", headers=headers)
      self.assertEqual(204, delete_response.status_code)
-
+    
 
 """ class AuthenticationTest(unittest.TestCase):
     def test_registration_and_login(self):

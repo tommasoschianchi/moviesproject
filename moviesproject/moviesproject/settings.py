@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -46,14 +45,25 @@ INSTALLED_APPS = [
     'allauth', # new
     'allauth.account', # new
     'allauth.socialaccount', # new
+    'drf_spectacular',
+    'oauth2_provider',
+    'social_django',
+    'drf_social_oauth2',
     # local
     'movies.apps.MoviesConfig',
    
 ]
-
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Movies API',
+    'DESCRIPTION': 'A Web API for creating and storing movies and tv series',
+    'VERSION': '1.0.0',
+}
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'drf_social_oauth2.authentication.SocialAuthentication',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
        # 'rest_framework.authentication.SessionAuthentication',
@@ -67,6 +77,8 @@ AUTHENTICATION_BACKENDS = [
 # `allauth` specific authentication methods
 # such as login by email
 'allauth.account.auth_backends.AuthenticationBackend',
+'drf_social_oauth2.backends.DjangoOAuth2',
+'django.contrib.auth.backends.ModelBackend',
 ]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -95,6 +107,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
+                
             ],
         },
     },
